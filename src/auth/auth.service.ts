@@ -34,7 +34,7 @@ export class AuthService {
             console.log(error)
             if (error instanceof PrismaClientKnownRequestError){
                 if (error.code = 'P2002'){
-                    throw new ForbiddenException('Condentials taken')
+                    throw new ForbiddenException('this email already exist')
                 }
             }
             throw error
