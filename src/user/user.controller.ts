@@ -9,7 +9,7 @@ export class UserController {
   @Get('me')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getMe(@GetUser() user: User, @GetUser('email') email: string) {
-    console.log({ email });
+    console.log(email);
     return user;
   }
 }

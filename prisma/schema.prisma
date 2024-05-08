@@ -11,32 +11,38 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  email String @unique
-  hash  String
-
-  firstName String?
-  lastName  String?
-
-  bookmarks Bookmark[]
-
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  email      String     @unique
+  hash       String
+  firstName  String?
+  lastName   String?
+  projects   Project[]  // One-to-many relationship with Project
   @@map("users")
 }
 
-model Bookmark {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Project {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  title       String
+  progress    Int        @default(0) 
+  creatorId   Int        // Add the creatorId field
+  users       User[]     // Many-to-many relationship with User
+  tasks       Task[]     // One-to-many relationship with Task
+}
 
+
+
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   title       String
   description String?
-  link        String
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-
-  @@map("bookmarks")
+  deadline    DateTime?
+  projectId   Int?       // Foreign key to Project
+  project     Project?   @relation(fields: [projectId], references: [id])
 }
