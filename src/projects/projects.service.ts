@@ -96,4 +96,35 @@ export class ProjectsService {
       },
     });
   }
+  async deleteProject( userId: number,projectId: number){
+    const project = await this.prisma.project.findUnique({
+      where: {
+        id: projectId,
+      },
+      include: {
+        users: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (!project) {
+      throw new ForbiddenException('This project Not exist !', '404');
+    }
+    const usersOfProject = project.users;
+    const isCreator = project.creatorId === userId;
+    const isUserIdPresent = usersOfProject.some((user) => user.id === userId);
+
+    if (!isCreator && !isUserIdPresent) {
+      throw new ForbiddenException('Not permission to Update!', '403');
+    }
+    return this.prisma.project.delete({
+      where: {
+        id: projectId,
+      }})
+
+
+
+    }
 }

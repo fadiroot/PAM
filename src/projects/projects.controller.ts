@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
@@ -22,11 +23,15 @@ export class ProjectsController {
   getMe(@GetUser('id') id: number) {
     return this.projectService.getProject(id);
   }
+
+
+
   @UseGuards(JwtGuard)
   @Post('create')
   createProject(@GetUser('id') id: number, @Body() dto: CreateProjectDto) {
     return this.projectService.createProject(id, dto);
   }
+
 
   @UseGuards(JwtGuard)
   @Patch(':id')
@@ -37,4 +42,15 @@ export class ProjectsController {
   ) {
     return this.projectService.editProjectById(userId, projectId, dto);
   }
+
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  deleteProject(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) projectId,
+  ){
+    return this.projectService.deleteProject(userId, projectId)
+  }
+
 }

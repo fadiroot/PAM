@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto } from './dto';
+import { signUpDto , signInDto } from './dto';
 import * as argon from 'argon2'
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -14,7 +14,7 @@ export class AuthService {
         private jwtService : JwtService,
         private config : ConfigService
     ){}
-    async signup(dto:AuthDto){
+    async signup(dto:signUpDto){
         try{
             const hash = await argon.hash(dto.password)
             const user = await this.prisma.user.create({
@@ -31,6 +31,7 @@ export class AuthService {
             return user
 
         }catch(error){
+            console.log(error)
             if (error instanceof PrismaClientKnownRequestError){
                 if (error.code = 'P2002'){
                     throw new ForbiddenException('this email already exist')
@@ -41,7 +42,7 @@ export class AuthService {
     }
 
 
-    async signin(dto:AuthDto){
+    async signin(dto:signInDto){
   
             const user = await this.prisma.user.findUnique({
                 where : {
@@ -81,7 +82,7 @@ export class AuthService {
             secret: secret,
           },
         );
-    
+        
         return {
           access_token: token,
         };
